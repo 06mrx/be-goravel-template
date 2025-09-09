@@ -1,0 +1,351 @@
+{{ define "welcome.tmpl" }}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Goravel - Go Web Framework</title>
+    
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600&display=swap" rel="stylesheet" />
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --background: #ffffff;
+            --surface: #ffffff;
+            --surface-alt: #f8fafc;
+            --border: #e2e8f0;
+            --border-subtle: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6;
+            --accent-subtle: #eff6ff;
+            --success: #10b981;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        
+        [data-theme="dark"] {
+            --background: #0f172a;
+            --surface: #1e293b;
+            --surface-alt: #334155;
+            --border: #475569;
+            --border-subtle: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --accent: #60a5fa;
+            --accent-subtle: #1e293b;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .logo {
+            width: 180px;
+            height: auto;
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+        
+        .title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.025em;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+        
+        .main-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 2rem;
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--success);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--success);
+            border-radius: 50%;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        .info-item {
+            padding: 1rem;
+            background: var(--surface-alt);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        
+        .info-item:hover {
+            border-color: var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .info-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .info-value {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            font-weight: 400;
+            word-break: break-word;
+        }
+        
+        .footer {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+        
+        .theme-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .theme-toggle:hover {
+            box-shadow: var(--shadow-md);
+        }
+        
+        .theme-icon {
+            width: 20px;
+            height: 20px;
+            color: var(--text-secondary);
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        
+        /* Mobile */
+        @media (max-width: 768px) {
+            .container {
+                padding: 2rem 1rem;
+            }
+            
+            .main-card {
+                padding: 1.5rem;
+                border-radius: 8px;
+            }
+            
+            .title {
+                font-size: 1.5rem;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .theme-toggle {
+                top: 1rem;
+                right: 1rem;
+            }
+            
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+        
+        /* Initial state for animations */
+        .header, .main-card, .footer {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+        <svg class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+    </button>
+    
+    <div class="container">
+        <header class="header">
+            <img src="https://www.goravel.dev/logo.png" alt="Goravel" class="logo">
+            <h1 class="title">Goravel X</h1>
+            <p class="subtitle">The Laravel-inspired web framework for Go, enhanced by MRX</p>
+        </header>
+        
+        <main class="main-card">
+            <div class="card-header">
+                <h2 class="card-title">Request Information</h2>
+                <div class="status">
+                    <div class="status-dot"></div>
+                    Connected
+                </div>
+            </div>
+            
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">IP Address</div>
+                    <div class="info-value">{{ .ip }}</div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-label">User Agent</div>
+                    <div class="info-value">{{ .ua }}</div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-label">Platform</div>
+                    <div class="info-value">{{ .platform }}</div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-label">Operating System</div>
+                    <div class="info-value">{{ .os }}</div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-label">Browser</div>
+                    <div class="info-value">{{ .browser }}</div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-label">Mobile Device</div>
+                    <div class="info-value">{{ if .mobile }}Yes{{ else }}No{{ end }}</div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-label">Device Model</div>
+                    <div class="info-value">{{ if .model }}{{ .model }}{{ else }}Unknown{{ end }}</div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-label">Bot Status</div>
+                    <div class="info-value">{{ if .is_bot }}Detected{{ else }}Human{{ end }}</div>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="footer">
+            Goravel {{ .version }}
+        </footer>
+    </div>
+    
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', newTheme);
+        }
+        
+        // Initialize theme based on system preference
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.body.setAttribute('data-theme', 'dark');
+        }
+        
+        // Animate elements on load
+        window.addEventListener('load', () => {
+            document.querySelector('.header').classList.add('animate-in', 'delay-1');
+            document.querySelector('.main-card').classList.add('animate-in', 'delay-2');
+            document.querySelector('.footer').classList.add('animate-in', 'delay-3');
+        });
+    </script>
+</body>
+</html>
+{{ end }}
