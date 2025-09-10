@@ -9,7 +9,7 @@ import (
 
 func Web() {
 	// facades.Route().Static("/", "./public")
-	facades.Route().Static("public", "./public").Name("storage")
+	facades.Route().Static("public", "./storage/app").Name("storage")
 
 	facades.Route().Get("/", func(ctx http.Context) http.Response {
 		userAgentStr := ctx.Request().Header("User-Agent")

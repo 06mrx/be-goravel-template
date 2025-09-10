@@ -88,23 +88,26 @@ func (r *ArticleController) Store(ctx http.Context) http.Response {
 	if validator.Fails() {
 		return ctx.Response().Json(http.StatusUnprocessableEntity, http.Json{"message": validator.Errors().All()})
 	}
-	allowedExt := []string{"jpg", "png", "jpeg"}
+	allowedExt := []string{"jpg", "png", "jpeg", "webp"}
 	file, err := ctx.Request().File("image")
+	maxUploadSize := int64(1 * 1024 * 1024)
 
 	if err != nil {
 		return ctx.Response().Json(stdhttp.StatusBadRequest, http.Json{"message": err.Error()})
 	}
 
-	extension, _ := file.Extension()
-	isAllowed := false
-	for _, a := range allowedExt {
-		if a == extension {
-			isAllowed = true
-			break
-		}
-	}
+	isAllowed := utils.CheckFileTypeAndSize(allowedExt, maxUploadSize, &file)
 	if !isAllowed {
-		return ctx.Response().Json(stdhttp.StatusBadRequest, http.Json{"message": http.Json{"image": http.Json{"error": fmt.Sprintf("file harus bertipe salah satu dari: %s, tapi yang dikirim adalah: %s", strings.Join(allowedExt, ", "), extension)}}})
+		return ctx.Response().Json(stdhttp.StatusBadRequest, http.Json{
+			"message": http.Json{
+				"image": http.Json{
+					"error": fmt.Sprintf(
+						"file harus bertipe salah satu dari: %s. Maksimal ukuran file yang diizinkan: %d MB",
+						strings.Join(allowedExt, ", "), (maxUploadSize / 1024 / 1024),
+					),
+				},
+			},
+		})
 
 	}
 
@@ -204,12 +207,32 @@ func (r *ArticleController) Update(ctx http.Context) http.Response {
 		})
 	}
 
-	validator, err := ctx.Request().Validate(map[string]string{
+	validator, _ := ctx.Request().Validate(map[string]string{
 		"title":   "required|string|min_len:3|unique:articles,title," + articleIDStr,
 		"content": "required|string|min_len:3",
 		"status":  "required|string",
 	})
-	fmt.Println("after validatoon")
+	allowedExt := []string{"jpg", "png", "jpeg", "webp"}
+	file, err := ctx.Request().File("image")
+	maxUploadSize := int64(1 * 1024 * 1024)
+	// extension, _ := file.Extension()
+	// size, _ := file.Size()
+	if err != nil {
+		return ctx.Response().Json(stdhttp.StatusBadRequest, http.Json{"message": err.Error()})
+	}
+	isAllowed := utils.CheckFileTypeAndSize(allowedExt, maxUploadSize, &file)
+	if !isAllowed {
+		return ctx.Response().Json(stdhttp.StatusBadRequest, http.Json{
+			"message": http.Json{
+				"image": http.Json{
+					"error": fmt.Sprintf(
+						"file harus bertipe salah satu dari: %s. Maksimal ukuran file yang diizinkan: %d MB",
+						strings.Join(allowedExt, ", "), (maxUploadSize / 1024 / 1024),
+					),
+				},
+			},
+		})
+	}
 	if err != nil {
 		return ctx.Response().Json(stdhttp.StatusBadRequest, http.Json{"message": err.Error()})
 	}
@@ -235,7 +258,6 @@ func (r *ArticleController) Update(ctx http.Context) http.Response {
 	article.Status = ctx.Request().Input("status")
 	article.UpdatedBy = userIDStr // Menetapkan UpdatedBy
 
-	file, err := ctx.Request().File("image")
 	if err != nil {
 		fmt.Println("gagal dapat file")
 	} else {

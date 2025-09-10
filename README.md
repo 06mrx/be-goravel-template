@@ -1,5 +1,14 @@
 <div align="center">
 
+# untuk Windows 64-bit
+$env:GOOS="windows"
+$env:GOARCH="amd64"
+ go build -trimpath -ldflags="-s -w" -o goravel_api
+
+$env:GOOS="linux"
+$env:GOARCH="amd64"
+ go build -trimpath -ldflags="-s -w" -o goravel_api
+
 <img src="https://www.goravel.dev/logo.png?v=1.14.x" width="300" alt="Logo">
 
 [![Doc](https://pkg.go.dev/badge/github.com/goravel/framework)](https://pkg.go.dev/github.com/goravel/framework)
